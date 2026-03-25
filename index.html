@@ -213,6 +213,18 @@ h1 span{background:linear-gradient(135deg,var(--accent),var(--accent2));
   .drag-handle{opacity:.4;}
   .time-row:hover .row-del,.time-row:hover .drag-handle{opacity:.5;}
 }
+
+/* ── Password toggle eye ── */
+.pw-wrap{position:relative;}
+.pw-wrap input{padding-right:2.8rem;}
+.pw-eye{
+  position:absolute;right:.85rem;top:50%;transform:translateY(-50%);
+  background:none;border:none;cursor:pointer;padding:0;
+  color:var(--muted);transition:color .18s;line-height:1;
+  display:flex;align-items:center;
+}
+.pw-eye:hover{color:var(--accent);}
+.pw-eye svg{width:18px;height:18px;pointer-events:none;}
 </style>
 </head>
 <body>
@@ -234,7 +246,14 @@ h1 span{background:linear-gradient(135deg,var(--accent),var(--accent2));
     </div>
     <div class="field">
       <label>Contraseña</label>
-      <input type="password" id="loginPassword" placeholder="••••••••" autocomplete="current-password"/>
+      <div class="pw-wrap">
+        <input type="password" id="loginPassword" placeholder="••••••••" autocomplete="current-password"/>
+        <button type="button" class="pw-eye" onclick="togglePw('loginPassword',this)" tabindex="-1" aria-label="Mostrar contraseña">
+          <svg id="eye-login" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
+          </svg>
+        </button>
+      </div>
     </div>
     <button class="btn-main" id="loginBtn" onclick="doLogin()">
       <span class="btn-text">Entrar</span>
@@ -253,13 +272,27 @@ h1 span{background:linear-gradient(135deg,var(--accent),var(--accent2));
     <div class="auth-error" id="changePwError"></div>
     <div class="field">
       <label>Nueva contraseña</label>
-      <input type="password" id="newPassword" placeholder="Mínimo 8 caracteres" autocomplete="new-password" oninput="checkStrength(this.value)"/>
+      <div class="pw-wrap">
+        <input type="password" id="newPassword" placeholder="Mínimo 8 caracteres" autocomplete="new-password" oninput="checkStrength(this.value)"/>
+        <button type="button" class="pw-eye" onclick="togglePw('newPassword',this)" tabindex="-1" aria-label="Mostrar contraseña">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
+          </svg>
+        </button>
+      </div>
       <div class="strength-bar"><span id="s1"></span><span id="s2"></span><span id="s3"></span><span id="s4"></span></div>
       <p class="strength-label" id="strengthLabel">—</p>
     </div>
     <div class="field">
       <label>Confirmar contraseña</label>
-      <input type="password" id="confirmPassword" placeholder="Repite tu contraseña" autocomplete="new-password"/>
+      <div class="pw-wrap">
+        <input type="password" id="confirmPassword" placeholder="Repite tu contraseña" autocomplete="new-password"/>
+        <button type="button" class="pw-eye" onclick="togglePw('confirmPassword',this)" tabindex="-1" aria-label="Mostrar contraseña">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
+          </svg>
+        </button>
+      </div>
       <p class="field-hint">Mínimo 8 caracteres, una mayúscula y un número.</p>
     </div>
     <button class="btn-main" id="changePwBtn" onclick="doChangePassword()">
@@ -338,6 +371,19 @@ function showAuthError(id, msg) {
   const el = document.getElementById(id); el.textContent = msg; el.classList.add("show");
 }
 function clearAuthError(id) { document.getElementById(id).classList.remove("show"); }
+
+function togglePw(inputId, btn) {
+  const inp = document.getElementById(inputId);
+  const showing = inp.type === "text";
+  inp.type = showing ? "password" : "text";
+  // swap icon: eye vs eye-off
+  btn.querySelector("svg").innerHTML = showing
+    ? '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>'
+    : '<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/>' +
+      '<path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/>' +
+      '<line x1="1" y1="1" x2="23" y2="23"/>';
+  btn.setAttribute("aria-label", showing ? "Mostrar contraseña" : "Ocultar contraseña");
+}
 
 function doLogin() {
   clearAuthError("loginError");
