@@ -563,13 +563,18 @@ function parseSlotValue(v, fallbackTime) {
 }
 
 function collectData() {
+  // Save as ordered array to preserve drag-and-drop order
   const data = {};
+  const order = [];
   document.querySelectorAll(".time-row").forEach(r => {
-    data[r.dataset.slot] = {
+    const slotId = r.dataset.slot;
+    data[slotId] = {
       time: r.querySelector(".time-input").value.trim(),
       activity: r.querySelector(".activity-input").value
     };
+    order.push(slotId);
   });
+  data["__order"] = order.join(",");
   return data;
 }
 
@@ -640,11 +645,29 @@ function buildRows(slots, dir) {
   let entries = [];
 
   if (slots && Object.keys(slots).length > 0) {
-    entries = Object.entries(slots).map(([id, v], index) => {
-      const fallback = SLOTS[index] ? SLOTS[index].label : "";
-      const parsed = parseSlotValue(v, fallback);
-      return { slotId: id, time: parsed.time, activity: parsed.activity };
-    });
+    // Remove control key before processing
+    const orderStr = slots["__order"];
+    const cleanSlots = Object.fromEntries(Object.entries(slots).filter(([k]) => k !== "__order"));
+
+    if (orderStr) {
+      // Respect saved order
+      const orderedKeys = orderStr.split(",").filter(k => cleanSlots[k] !== undefined);
+      // Add any keys not in order at the end (safety)
+      const remaining = Object.keys(cleanSlots).filter(k => !orderedKeys.includes(k));
+      const allKeys = [...orderedKeys, ...remaining];
+      entries = allKeys.map((id, index) => {
+        const fallback = SLOTS[index] ? SLOTS[index].label : "";
+        const parsed = parseSlotValue(cleanSlots[id], fallback);
+        return { slotId: id, time: parsed.time, activity: parsed.activity };
+      });
+    } else {
+      // No order saved — sort by time label naturally
+      entries = Object.entries(cleanSlots).map(([id, v], index) => {
+        const fallback = SLOTS[index] ? SLOTS[index].label : "";
+        const parsed = parseSlotValue(v, fallback);
+        return { slotId: id, time: parsed.time, activity: parsed.activity };
+      });
+    }
   } else {
     SLOTS.forEach(slot => entries.push({ slotId: slot.id, time: slot.label, activity: "" }));
   }
@@ -711,9 +734,9 @@ function showToast(msg, isError = false) {
 }
 
 function initApp() {
-  const saved = localStorage.getItem("hp_last_day");
+  // Always open on today
   const jsDay = ["domingo","lunes","martes","miercoles","jueves","viernes","sabado"][new Date().getDay()];
-  currentDay = (saved && DAYS.includes(saved)) ? saved : (jsDay || "lunes");
+  currentDay = DAYS.includes(jsDay) ? jsDay : "lunes";
   document.querySelectorAll(".day-pill").forEach(p => p.classList.toggle("active", p.dataset.day === currentDay));
   loadDay(currentDay, null);
 }
