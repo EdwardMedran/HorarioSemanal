@@ -23,7 +23,6 @@
   --red:#ff5f6d;--glow:rgba(124,106,255,.35);
 }
 body{font-family:'Space Grotesk',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;}
-
 .ambient{position:fixed;inset:0;pointer-events:none;z-index:0;
   background:radial-gradient(ellipse 60% 50% at 15% 20%,rgba(124,106,255,.12) 0%,transparent 70%),
              radial-gradient(ellipse 50% 40% at 85% 80%,rgba(255,106,176,.10) 0%,transparent 70%);}
@@ -31,19 +30,13 @@ body{font-family:'Space Grotesk',sans-serif;background:var(--bg);color:var(--tex
   background-image:linear-gradient(var(--border) 1px,transparent 1px),linear-gradient(90deg,var(--border) 1px,transparent 1px);
   background-size:60px 60px;
   mask-image:radial-gradient(ellipse 80% 80% at 50% 50%,black 40%,transparent 100%);}
-
-/* ── Pages ── */
 .page{position:fixed;inset:0;z-index:10;display:flex;align-items:center;justify-content:center;padding:1.5rem;
   transition:opacity .35s,transform .35s;will-change:transform,opacity;}
 .page.hidden{opacity:0;pointer-events:none;transform:scale(.96);}
-
-/* ── Auth card ── */
 .auth-card{background:var(--surface);border:1px solid var(--border);border-radius:24px;
   width:100%;max-width:400px;padding:2.5rem 2rem;
-  box-shadow:0 32px 80px rgba(0,0,0,.6);
-  animation:cardIn .5s cubic-bezier(.22,1,.36,1) both;}
+  box-shadow:0 32px 80px rgba(0,0,0,.6);animation:cardIn .5s cubic-bezier(.22,1,.36,1) both;}
 @keyframes cardIn{from{opacity:0;transform:translateY(24px) scale(.97)}to{opacity:1;transform:none}}
-
 .auth-logo{text-align:center;margin-bottom:2rem;}
 .auth-logo h1{font-family:'Syne',sans-serif;font-size:1.9rem;font-weight:800;line-height:1;
   background:linear-gradient(135deg,#fff 0%,rgba(255,255,255,.5) 100%);
@@ -51,25 +44,19 @@ body{font-family:'Space Grotesk',sans-serif;background:var(--bg);color:var(--tex
 .auth-logo h1 span{background:linear-gradient(135deg,var(--accent),var(--accent2));
   -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
 .auth-logo p{font-size:.75rem;color:var(--muted);letter-spacing:.12em;text-transform:uppercase;margin-top:.3rem;}
-
 .auth-title{font-family:'Syne',sans-serif;font-size:1.15rem;font-weight:700;margin-bottom:.3rem;}
 .auth-subtitle{font-size:.82rem;color:var(--muted);margin-bottom:1.8rem;line-height:1.5;}
-
 .field{margin-bottom:1.1rem;}
-.field label{display:block;font-size:.72rem;font-weight:600;color:var(--muted);letter-spacing:.1em;
-  text-transform:uppercase;margin-bottom:.45rem;}
+.field label{display:block;font-size:.72rem;font-weight:600;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:.45rem;}
 .field input{width:100%;background:var(--surface2);border:1px solid var(--border-hover);
   border-radius:10px;padding:.75rem 1rem;font-family:'Space Grotesk',sans-serif;
   font-size:.9rem;color:var(--text);outline:none;transition:border-color .2s,box-shadow .2s;}
 .field input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(124,106,255,.15);}
 .field input::placeholder{color:var(--muted);opacity:.5;}
 .field-hint{font-size:.7rem;color:var(--muted);margin-top:.4rem;line-height:1.4;}
-
 .auth-error{background:rgba(255,95,109,.1);border:1px solid rgba(255,95,109,.25);
-  border-radius:8px;padding:.65rem 1rem;font-size:.8rem;color:var(--red);
-  margin-bottom:1.1rem;display:none;}
+  border-radius:8px;padding:.65rem 1rem;font-size:.8rem;color:var(--red);margin-bottom:1.1rem;display:none;}
 .auth-error.show{display:block;}
-
 .btn-main{width:100%;border:none;border-radius:10px;padding:.85rem;cursor:pointer;
   font-family:'Space Grotesk',sans-serif;font-size:.88rem;font-weight:600;letter-spacing:.04em;
   background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;
@@ -81,16 +68,12 @@ body{font-family:'Space Grotesk',sans-serif;background:var(--bg);color:var(--tex
 .btn-main.loading .btn-text{display:none;}
 .btn-main.loading .spinner{display:block;}
 @keyframes spin{to{transform:rotate(360deg)}}
-
 .strength-bar{display:flex;gap:4px;margin-top:.5rem;}
 .strength-bar span{flex:1;height:3px;border-radius:2px;background:var(--border-hover);transition:background .3s;}
 .strength-label{font-size:.68rem;color:var(--muted);margin-top:.35rem;}
-
-/* ── App ── */
 #appPage{position:relative;z-index:1;overflow-y:auto;}
 #appPage:not(.hidden){position:relative;min-height:100vh;}
 .container{max-width:680px;margin:0 auto;padding:0 1.25rem 5rem;}
-
 .topbar{display:flex;align-items:center;justify-content:space-between;padding:1.5rem 0 0;}
 .topbar-logo{font-family:'Syne',sans-serif;font-size:1rem;font-weight:800;
   background:linear-gradient(135deg,var(--accent),var(--accent2));
@@ -100,223 +83,131 @@ body{font-family:'Space Grotesk',sans-serif;background:var(--bg);color:var(--tex
 .user-dot{width:7px;height:7px;border-radius:50%;background:var(--accent3);animation:pulse-dot 2s ease infinite;}
 @keyframes pulse-dot{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.7)}}
 .btn-logout{cursor:pointer;border:1px solid var(--border-hover);background:transparent;
-  border-radius:7px;padding:.3rem .8rem;font-family:'Space Grotesk',sans-serif;
-  font-size:.7rem;color:var(--muted);transition:all .18s;}
+  border-radius:7px;padding:.3rem .8rem;font-family:'Space Grotesk',sans-serif;font-size:.7rem;color:var(--muted);transition:all .18s;}
 .btn-logout:hover{color:var(--red);border-color:rgba(255,95,109,.4);}
-
 header{padding:2rem 0 1.8rem;text-align:center;}
-.badge{display:inline-flex;align-items:center;gap:6px;
-  background:rgba(124,106,255,.12);border:1px solid rgba(124,106,255,.25);
-  border-radius:100px;padding:4px 14px;
-  font-size:.68rem;letter-spacing:.2em;text-transform:uppercase;color:var(--accent);margin-bottom:1rem;}
-h1{font-family:'Syne',sans-serif;font-size:clamp(2rem,6vw,3.5rem);font-weight:800;
-  line-height:1;letter-spacing:-.02em;
+.badge{display:inline-flex;align-items:center;gap:6px;background:rgba(124,106,255,.12);border:1px solid rgba(124,106,255,.25);
+  border-radius:100px;padding:4px 14px;font-size:.68rem;letter-spacing:.2em;text-transform:uppercase;color:var(--accent);margin-bottom:1rem;}
+h1{font-family:'Syne',sans-serif;font-size:clamp(2rem,6vw,3.5rem);font-weight:800;line-height:1;letter-spacing:-.02em;
   background:linear-gradient(135deg,#fff 0%,rgba(255,255,255,.5) 100%);
   -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
 h1 span{background:linear-gradient(135deg,var(--accent),var(--accent2));
   -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
-
 .day-nav{display:flex;gap:.4rem;padding:.25rem 0 1rem;justify-content:center;flex-wrap:wrap;}
 .day-pill{flex-shrink:0;cursor:pointer;border:1px solid var(--border);background:var(--surface);
   border-radius:100px;padding:.45rem 1.1rem;font-size:.8rem;font-weight:500;color:var(--muted);
   transition:all .25s cubic-bezier(.34,1.56,.64,1);position:relative;overflow:hidden;user-select:none;}
-.day-pill::before{content:'';position:absolute;inset:0;
-  background:linear-gradient(135deg,var(--accent),var(--accent2));opacity:0;transition:opacity .2s;}
+.day-pill::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,var(--accent),var(--accent2));opacity:0;transition:opacity .2s;}
 .day-pill span{position:relative;z-index:1;}
 .day-pill:hover{border-color:var(--border-hover);color:var(--text);transform:translateY(-2px) scale(1.05);}
-.day-pill.active{border-color:transparent;color:#fff;transform:translateY(-3px) scale(1.07);
-  box-shadow:0 0 22px var(--glow),0 6px 18px rgba(0,0,0,.45);}
+.day-pill.active{border-color:transparent;color:#fff;transform:translateY(-3px) scale(1.07);box-shadow:0 0 22px var(--glow),0 6px 18px rgba(0,0,0,.45);}
 .day-pill.active::before{opacity:1;}
-
-.card{background:var(--surface);border:1px solid var(--border);border-radius:20px;overflow:hidden;
-  box-shadow:0 24px 64px rgba(0,0,0,.55);}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:20px;overflow:hidden;box-shadow:0 24px 64px rgba(0,0,0,.55);}
 .card-head{padding:1.2rem 1.6rem;display:flex;align-items:center;justify-content:space-between;
-  border-bottom:1px solid var(--border);
-  background:linear-gradient(135deg,rgba(124,106,255,.08),rgba(255,106,176,.05));}
+  border-bottom:1px solid var(--border);background:linear-gradient(135deg,rgba(124,106,255,.08),rgba(255,106,176,.05));}
 .card-day{font-family:'Syne',sans-serif;font-size:1.3rem;font-weight:700;
   background:linear-gradient(135deg,var(--accent),var(--accent2));
   -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
-.card-actions{display:flex;gap:.5rem;}
-.btn{cursor:pointer;border:1px solid var(--border-hover);background:var(--surface2);
-  border-radius:8px;padding:.4rem .9rem;font-family:'Space Grotesk',sans-serif;
-  font-size:.72rem;font-weight:500;color:var(--muted);transition:all .18s;}
-.btn:hover{color:var(--text);border-color:var(--accent);background:rgba(124,106,255,.1);}
-.btn.primary{background:linear-gradient(135deg,var(--accent),var(--accent2));
-  border-color:transparent;color:#fff;box-shadow:0 0 14px rgba(124,106,255,.4);}
-.btn.primary:hover{box-shadow:0 0 24px rgba(124,106,255,.65);transform:translateY(-1px);}
-
-.sync-row{padding:.6rem 1.6rem;display:flex;align-items:center;justify-content:space-between;
-  border-bottom:1px solid var(--border);}
+.sync-row{padding:.6rem 1.6rem;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);}
 .sync-status{font-size:.68rem;color:var(--muted);display:flex;align-items:center;gap:.4rem;}
 .sync-dot{width:5px;height:5px;border-radius:50%;background:var(--muted);transition:background .3s;}
 .sync-dot.synced{background:var(--accent3);}
 .sync-dot.syncing{background:var(--accent);animation:pulse-dot 1s ease infinite;}
 .sync-dot.error{background:var(--red);}
-
 .progress-wrap{padding:.7rem 1.6rem .4rem;display:flex;align-items:center;gap:10px;}
 .progress-bar{flex:1;height:3px;background:rgba(255,255,255,.06);border-radius:3px;overflow:hidden;}
-.progress-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));
-  border-radius:3px;transition:width .5s cubic-bezier(.34,1.56,.64,1);}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:3px;transition:width .5s cubic-bezier(.34,1.56,.64,1);}
 .progress-label{font-size:.68rem;color:var(--muted);white-space:nowrap;}
-
 .list-clip{overflow:hidden;}
-.time-row{display:grid;grid-template-columns:100px 1fr 28px;border-bottom:1px solid var(--border);
-  position:relative;transition:background .18s;}
+.time-row{display:grid;grid-template-columns:22px 100px 1fr 28px;border-bottom:1px solid var(--border);position:relative;transition:background .18s;}
 .time-row:last-child{border-bottom:none;}
 .time-row::after{content:'';position:absolute;left:0;top:0;bottom:0;width:2px;
-  background:linear-gradient(180deg,var(--accent),var(--accent2));
-  opacity:0;transition:opacity .22s,transform .22s;transform:scaleY(.4);}
+  background:linear-gradient(180deg,var(--accent),var(--accent2));opacity:0;transition:opacity .22s,transform .22s;transform:scaleY(.4);}
 .time-row:hover::after,.time-row:focus-within::after{opacity:1;transform:scaleY(1);}
 .time-row:hover{background:rgba(255,255,255,.022);}
 .time-row:focus-within{background:rgba(124,106,255,.055);}
-/* time label — editable on click */
-.time-label{padding:.85rem .5rem .85rem 1.1rem;border-right:1px solid var(--border);
-  display:flex;align-items:flex-start;transition:color .2s;position:relative;}
-.time-input{background:transparent;border:none;outline:none;width:100%;
-  font-family:'Space Grotesk',sans-serif;font-size:.72rem;font-weight:600;
-  color:var(--muted);letter-spacing:.05em;cursor:pointer;padding:0;
-  transition:color .2s;}
+.time-row.dragging{opacity:.35;background:rgba(124,106,255,.08);}
+.time-row.drag-over{border-top:2px solid var(--accent);margin-top:-1px;}
+.time-label{padding:.85rem .5rem .85rem 1.1rem;border-right:1px solid var(--border);display:flex;align-items:flex-start;transition:color .2s;position:relative;}
+.time-input{background:transparent;border:none;outline:none;width:100%;font-family:'Space Grotesk',sans-serif;font-size:.72rem;font-weight:600;color:var(--muted);letter-spacing:.05em;cursor:pointer;padding:0;transition:color .2s;}
 .time-input:focus{color:var(--accent);cursor:text;}
 .time-row:hover .time-input{color:rgba(124,106,255,.9);}
 .time-row.has-content .time-input{color:var(--accent3);}
 .time-row.has-content:hover .time-input,.time-row.has-content .time-input:focus{color:var(--accent);}
-.activity-input{width:100%;border:none;background:transparent;
-  font-family:'Space Grotesk',sans-serif;font-size:.9rem;color:var(--text);
-  padding:.9rem 1rem .9rem .9rem;outline:none;resize:none;min-height:46px;
-  line-height:1.5;caret-color:var(--accent);}
+.activity-input{width:100%;border:none;background:transparent;font-family:'Space Grotesk',sans-serif;font-size:.9rem;color:var(--text);
+  padding:.9rem 1rem .9rem .9rem;outline:none;resize:none;min-height:46px;line-height:1.5;caret-color:var(--accent);}
 .activity-input::placeholder{color:var(--muted);opacity:.38;font-style:italic;font-weight:300;}
-/* delete button */
-.row-del{display:flex;align-items:center;justify-content:center;
-  background:transparent;border:none;cursor:pointer;
-  color:var(--muted);opacity:0;transition:opacity .18s,color .18s;
-  padding:0 6px;font-size:1rem;line-height:1;flex-shrink:0;}
+.row-del{display:flex;align-items:center;justify-content:center;background:transparent;border:none;cursor:pointer;
+  color:var(--muted);opacity:0;transition:opacity .18s,color .18s;padding:0 6px;font-size:1rem;line-height:1;flex-shrink:0;}
 .time-row:hover .row-del{opacity:1;}
 .row-del:hover{color:var(--red);}
-/* add row button */
-.add-row-btn{display:flex;align-items:center;justify-content:center;gap:.45rem;
-  width:100%;padding:.7rem;background:transparent;border:none;border-top:1px solid var(--border);
-  cursor:pointer;color:var(--muted);font-family:'Space Grotesk',sans-serif;
-  font-size:.75rem;letter-spacing:.08em;transition:all .18s;}
+.add-row-btn{display:flex;align-items:center;justify-content:center;gap:.45rem;width:100%;padding:.7rem;
+  background:transparent;border:none;border-top:1px solid var(--border);cursor:pointer;color:var(--muted);
+  font-family:'Space Grotesk',sans-serif;font-size:.75rem;letter-spacing:.08em;transition:all .18s;}
 .add-row-btn:hover{background:rgba(124,106,255,.07);color:var(--accent);}
-/* drag handle */
-.drag-handle{display:flex;align-items:center;justify-content:center;
-  width:22px;flex-shrink:0;cursor:grab;color:var(--muted);opacity:0;
-  transition:opacity .18s;padding:0 2px;font-size:.85rem;user-select:none;}
+.drag-handle{display:flex;align-items:center;justify-content:center;width:22px;flex-shrink:0;cursor:grab;
+  color:var(--muted);opacity:0;transition:opacity .18s;padding:0 2px;font-size:.85rem;user-select:none;}
 .drag-handle:active{cursor:grabbing;}
 .time-row:hover .drag-handle{opacity:1;}
-.time-row{grid-template-columns:22px 100px 1fr 28px;}
-.time-row.dragging{opacity:.35;background:rgba(124,106,255,.08);}
-.time-row.drag-over{border-top:2px solid var(--accent);margin-top:-1px;}
-
 @keyframes slideInRight{from{opacity:0;transform:translateX(40px)}to{opacity:1;transform:translateX(0)}}
 @keyframes slideInLeft{from{opacity:0;transform:translateX(-40px)}to{opacity:1;transform:translateX(0)}}
 .slide-right .time-row{animation:slideInRight .32s cubic-bezier(.22,1,.36,1) both;}
 .slide-left  .time-row{animation:slideInLeft  .32s cubic-bezier(.22,1,.36,1) both;}
-
 .toast{position:fixed;bottom:2rem;left:50%;transform:translateX(-50%) translateY(20px);
-  background:rgba(106,255,218,.1);border:1px solid rgba(106,255,218,.22);
-  color:var(--accent3);border-radius:100px;padding:.55rem 1.5rem;
-  font-size:.78rem;letter-spacing:.08em;opacity:0;
-  transition:all .3s cubic-bezier(.34,1.56,.64,1);pointer-events:none;
-  white-space:nowrap;z-index:100;backdrop-filter:blur(12px);}
+  background:rgba(106,255,218,.1);border:1px solid rgba(106,255,218,.22);color:var(--accent3);
+  border-radius:100px;padding:.55rem 1.5rem;font-size:.78rem;letter-spacing:.08em;opacity:0;
+  transition:all .3s cubic-bezier(.34,1.56,.64,1);pointer-events:none;white-space:nowrap;z-index:100;backdrop-filter:blur(12px);}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
 .toast.error-toast{background:rgba(255,95,109,.1);border-color:rgba(255,95,109,.25);color:var(--red);}
-
 ::-webkit-scrollbar{width:4px;}
 ::-webkit-scrollbar-thumb{background:var(--border-hover);border-radius:4px;}
 
-/* ══════════════════════════════════════
-   MOBILE OPTIMIZATIONS
-══════════════════════════════════════ */
 @media (max-width: 600px) {
-
-  /* Auth */
   .page{padding:.75rem;}
   #loginPage,#changePwPage{align-items:center;}
   #appPage:not(.hidden){align-items:flex-start;}
-  .auth-card{border-radius:20px;padding:2rem 1.25rem 1.75rem;
-    max-height:92vh;overflow-y:auto;}
+  .auth-card{border-radius:20px;padding:2rem 1.25rem 1.75rem;max-height:92vh;overflow-y:auto;}
   .auth-logo{margin-bottom:1.4rem;}
   .auth-logo h1{font-size:1.6rem;}
-
-  /* App container */
   .container{padding:0 .75rem 6rem;}
-
-  /* Topbar — compact */
   .topbar{padding:1rem 0 0;}
   .topbar-logo{font-size:.9rem;}
   .user-badge .user-dot{display:none;}
-  #userEmail{
-    max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
-    font-size:.68rem;
-  }
+  #userEmail{max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:.68rem;}
   .btn-logout{padding:.28rem .65rem;font-size:.65rem;}
-
-  /* Header — much smaller on mobile */
   header{padding:1rem 0 1.2rem;}
   .badge{font-size:.6rem;padding:3px 10px;margin-bottom:.6rem;}
   h1{font-size:clamp(1.7rem,9vw,2.4rem);}
-
-  /* Day pills — scrollable single row */
-  .day-nav{
-    flex-wrap:nowrap;overflow-x:auto;justify-content:flex-start;
-    padding:.25rem 0 .75rem;gap:.35rem;
+  .day-nav{flex-wrap:nowrap;overflow-x:auto;justify-content:flex-start;padding:.25rem 0 .75rem;gap:.35rem;
     scrollbar-width:none;-webkit-overflow-scrolling:touch;
-    /* fade edges */
     -webkit-mask-image:linear-gradient(90deg,transparent,black 8%,black 92%,transparent);
-    mask-image:linear-gradient(90deg,transparent,black 8%,black 92%,transparent);
-  }
+    mask-image:linear-gradient(90deg,transparent,black 8%,black 92%,transparent);}
   .day-nav::-webkit-scrollbar{display:none;}
   .day-pill{padding:.5rem 1rem;font-size:.78rem;}
   .day-pill.active{transform:scale(1.06);}
-
-  /* Card */
   .card{border-radius:16px;}
   .card-head{padding:.9rem 1rem;}
   .card-day{font-size:1.1rem;}
-
-  /* Sync row */
   .sync-row{padding:.45rem 1rem;}
-  #lastSaved{display:none;} /* hide on mobile, too cramped */
-
-  /* Progress */
+  #lastSaved{display:none;}
   .progress-wrap{padding:.5rem 1rem .3rem;}
-
-  /* Time rows — bigger touch targets */
   .time-row{grid-template-columns:18px 80px 1fr 36px;}
   .time-label{padding:.75rem .4rem .75rem .7rem;}
   .time-input{font-size:.7rem;}
-  .activity-input{
-    font-size:.88rem;padding:.75rem .6rem .75rem .7rem;min-height:44px;
-  }
-
-  /* Always show delete + drag on mobile (no hover) */
+  .activity-input{font-size:.88rem;padding:.75rem .6rem .75rem .7rem;min-height:44px;}
   .row-del{opacity:.55;font-size:1.1rem;padding:0 8px;min-width:36px;min-height:44px;}
   .row-del:active{color:var(--red);opacity:1;}
   .drag-handle{opacity:.45;width:18px;}
-
-  /* Add row button */
   .add-row-btn{padding:.85rem;font-size:.78rem;}
-
-  /* Toast — full width on mobile */
   .toast{width:90%;text-align:center;white-space:normal;font-size:.75rem;bottom:1.5rem;}
-
-  /* Inputs — prevent iOS zoom (font-size must be >=16px for form inputs) */
-  .field input,.time-input,.activity-input{font-size:16px;}
-  .time-input{font-size:13px;} /* override back for time, less critical */
-
-  /* Drag hint text */
-  .drag-handle::after{content:'';} 
+  .field input,.activity-input{font-size:16px;}
+  .time-input{font-size:13px;}
 }
-
-/* Very small phones */
 @media (max-width: 360px) {
   .time-row{grid-template-columns:16px 70px 1fr 34px;}
   .time-input{font-size:.65rem;}
   h1{font-size:1.5rem;}
 }
-
-/* Touch devices — show controls always (no hover state) */
 @media (hover: none) {
   .row-del{opacity:.5;}
   .drag-handle{opacity:.4;}
@@ -328,7 +219,6 @@ h1 span{background:linear-gradient(135deg,var(--accent),var(--accent2));
 <div class="ambient"></div>
 <div class="grid-lines"></div>
 
-<!-- ══ LOGIN ══ -->
 <div class="page" id="loginPage">
   <div class="auth-card">
     <div class="auth-logo">
@@ -336,11 +226,11 @@ h1 span{background:linear-gradient(135deg,var(--accent),var(--accent2));
       <p>Planificador Semanal</p>
     </div>
     <h2 class="auth-title">Iniciar sesión</h2>
-    <p class="auth-subtitle">Ingresa con tu cuenta para acceder a tu horario.</p>
+    <p class="auth-subtitle">Ingresa con tu usuario y contraseña para acceder.</p>
     <div class="auth-error" id="loginError"></div>
     <div class="field">
-      <label>Correo electrónico</label>
-      <input type="email" id="loginEmail" placeholder="tu@correo.com" autocomplete="email"/>
+      <label>Usuario</label>
+      <input type="text" id="loginEmail" placeholder="tu usuario" autocomplete="username"/>
     </div>
     <div class="field">
       <label>Contraseña</label>
@@ -353,7 +243,6 @@ h1 span{background:linear-gradient(135deg,var(--accent),var(--accent2));
   </div>
 </div>
 
-<!-- ══ CAMBIAR CONTRASEÑA (primer login) ══ -->
 <div class="page hidden" id="changePwPage">
   <div class="auth-card">
     <div class="auth-logo">
@@ -364,11 +253,8 @@ h1 span{background:linear-gradient(135deg,var(--accent),var(--accent2));
     <div class="auth-error" id="changePwError"></div>
     <div class="field">
       <label>Nueva contraseña</label>
-      <input type="password" id="newPassword" placeholder="Mínimo 8 caracteres"
-             autocomplete="new-password" oninput="checkStrength(this.value)"/>
-      <div class="strength-bar">
-        <span id="s1"></span><span id="s2"></span><span id="s3"></span><span id="s4"></span>
-      </div>
+      <input type="password" id="newPassword" placeholder="Mínimo 8 caracteres" autocomplete="new-password" oninput="checkStrength(this.value)"/>
+      <div class="strength-bar"><span id="s1"></span><span id="s2"></span><span id="s3"></span><span id="s4"></span></div>
       <p class="strength-label" id="strengthLabel">—</p>
     </div>
     <div class="field">
@@ -383,7 +269,6 @@ h1 span{background:linear-gradient(135deg,var(--accent),var(--accent2));
   </div>
 </div>
 
-<!-- ══ APP ══ -->
 <div class="page hidden" id="appPage">
   <div class="container" style="width:100%">
     <div class="topbar">
@@ -409,7 +294,6 @@ h1 span{background:linear-gradient(135deg,var(--accent),var(--accent2));
     <div class="card">
       <div class="card-head">
         <span class="card-day" id="cardDayName">Lunes</span>
-
       </div>
       <div class="sync-row">
         <span class="sync-status">
@@ -422,9 +306,7 @@ h1 span{background:linear-gradient(135deg,var(--accent),var(--accent2));
         <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
         <span class="progress-label" id="progressLabel">0 actividades</span>
       </div>
-      <div class="list-clip">
-        <div id="scheduleList"></div>
-      </div>
+      <div class="list-clip"><div id="scheduleList"></div></div>
     </div>
   </div>
 </div>
@@ -432,128 +314,92 @@ h1 span{background:linear-gradient(135deg,var(--accent),var(--accent2));
 <div class="toast" id="toast"></div>
 
 <script>
-// ══════════════════════════════════════════════
-//  CONFIG — tus valores reales de AWS
-// ══════════════════════════════════════════════
 const CONFIG = {
   region:     "sa-east-1",
-  userPoolId: "sa-east-1_eTpl9ADWH",
-  clientId:   "1id90v3t1hgtmfeqb8sv9sa784",
+  userPoolId: "sa-east-1_6TmTbg0u3",
+  clientId:   "cclsslvborko5sjoprtucp67",
   lambdaUrl:  "https://pnohfzljrksvzth3h7pifd4hma0iwcdt.lambda-url.sa-east-1.on.aws",
 };
 
-// ══════════════════════════════════════════════
-//  COGNITO AUTH
-// ══════════════════════════════════════════════
 const userPool = new AmazonCognitoIdentity.CognitoUserPool({
-  UserPoolId: CONFIG.userPoolId,
-  ClientId:   CONFIG.clientId,
+  UserPoolId: CONFIG.userPoolId, ClientId: CONFIG.clientId,
 });
-
-let cognitoUser = null;
-let idToken     = null;
+let cognitoUser = null, idToken = null;
 
 function showPage(id) {
-  ["loginPage","changePwPage","appPage"].forEach(p => {
-    document.getElementById(p).classList.toggle("hidden", p !== id);
-  });
+  ["loginPage","changePwPage","appPage"].forEach(p =>
+    document.getElementById(p).classList.toggle("hidden", p !== id));
 }
 function setLoading(btnId, on) {
   const b = document.getElementById(btnId);
-  b.classList.toggle("loading", on);
-  b.disabled = on;
+  b.classList.toggle("loading", on); b.disabled = on;
 }
 function showAuthError(id, msg) {
-  const el = document.getElementById(id);
-  el.textContent = msg;
-  el.classList.add("show");
+  const el = document.getElementById(id); el.textContent = msg; el.classList.add("show");
 }
-function clearAuthError(id) {
-  document.getElementById(id).classList.remove("show");
-}
+function clearAuthError(id) { document.getElementById(id).classList.remove("show"); }
 
-// ── Login ──────────────────────────────────────
 function doLogin() {
   clearAuthError("loginError");
-  const email = document.getElementById("loginEmail").value.trim();
+  const email = document.getElementById("loginEmail").value.trim().toLowerCase();
   const pass  = document.getElementById("loginPassword").value;
   if (!email || !pass) { showAuthError("loginError","Completa todos los campos."); return; }
-
   setLoading("loginBtn", true);
-
   const authDetails = new AmazonCognitoIdentity.AuthenticationDetails({ Username: email, Password: pass });
   cognitoUser = new AmazonCognitoIdentity.CognitoUser({ Username: email, Pool: userPool });
-
   cognitoUser.authenticateUser(authDetails, {
     onSuccess(session) {
       idToken = session.getIdToken().getJwtToken();
       document.getElementById("userEmail").textContent = email;
       setLoading("loginBtn", false);
-      showPage("appPage");
-      startInactivityWatcher();
-      initApp();
+      showPage("appPage"); startInactivityWatcher(); initApp();
     },
     onFailure(err) {
       setLoading("loginBtn", false);
-      const msgs = {
-        NotAuthorizedException:    "Correo o contraseña incorrectos.",
-        UserNotFoundException:     "No existe una cuenta con ese correo.",
-        UserNotConfirmedException: "Cuenta no verificada. Revisa tu correo.",
-      };
+      const msgs = { NotAuthorizedException:"Usuario o contraseña incorrectos.", UserNotFoundException:"No existe ese usuario.", UserNotConfirmedException:"Cuenta no verificada." };
       showAuthError("loginError", msgs[err.code] || err.message);
     },
-    newPasswordRequired() {
-      setLoading("loginBtn", false);
-      showPage("changePwPage");
-    }
+    newPasswordRequired() { setLoading("loginBtn", false); showPage("changePwPage"); }
   });
 }
 
-// ── Cambio de contraseña (primer login) ────────
 function checkStrength(pw) {
-  const bars   = ["s1","s2","s3","s4"].map(id => document.getElementById(id));
+  const bars = ["s1","s2","s3","s4"].map(id => document.getElementById(id));
   const colors = ["#ff5f6d","#ff9f43","#ffd32a","#6affda"];
   const labels = ["Muy débil","Débil","Aceptable","Fuerte"];
   let score = 0;
-  if (pw.length >= 8)        score++;
-  if (/[A-Z]/.test(pw))      score++;
-  if (/[0-9]/.test(pw))      score++;
+  if (pw.length >= 8) score++;
+  if (/[A-Z]/.test(pw)) score++;
+  if (/[0-9]/.test(pw)) score++;
   if (/[^A-Za-z0-9]/.test(pw)) score++;
   bars.forEach((b,i) => b.style.background = i < score ? colors[score-1] : "var(--border-hover)");
   const lbl = document.getElementById("strengthLabel");
   lbl.textContent = pw ? (labels[score-1] || "Muy débil") : "—";
-  lbl.style.color  = pw ? colors[score-1] : "var(--muted)";
+  lbl.style.color = pw ? colors[score-1] : "var(--muted)";
 }
 
 function doChangePassword() {
   clearAuthError("changePwError");
   const np = document.getElementById("newPassword").value;
   const cp = document.getElementById("confirmPassword").value;
-  if (!np || !cp)       { showAuthError("changePwError","Completa los dos campos."); return; }
-  if (np !== cp)        { showAuthError("changePwError","Las contraseñas no coinciden."); return; }
-  if (np.length < 8)    { showAuthError("changePwError","Mínimo 8 caracteres."); return; }
-  if (!/[A-Z]/.test(np)){ showAuthError("changePwError","Incluye al menos una mayúscula."); return; }
-  if (!/[0-9]/.test(np)){ showAuthError("changePwError","Incluye al menos un número."); return; }
-
+  if (!np || !cp) { showAuthError("changePwError","Completa los dos campos."); return; }
+  if (np !== cp)  { showAuthError("changePwError","Las contraseñas no coinciden."); return; }
+  if (np.length < 8) { showAuthError("changePwError","Mínimo 8 caracteres."); return; }
+  if (!/[A-Z]/.test(np)) { showAuthError("changePwError","Incluye al menos una mayúscula."); return; }
+  if (!/[0-9]/.test(np)) { showAuthError("changePwError","Incluye al menos un número."); return; }
   setLoading("changePwBtn", true);
   cognitoUser.completeNewPasswordChallenge(np, {}, {
     onSuccess(session) {
       idToken = session.getIdToken().getJwtToken();
-      const email = document.getElementById("loginEmail").value.trim();
+      const email = document.getElementById("loginEmail").value.trim().toLowerCase();
       document.getElementById("userEmail").textContent = email;
       setLoading("changePwBtn", false);
-      showPage("appPage");
-      startInactivityWatcher();
-      initApp();
+      showPage("appPage"); startInactivityWatcher(); initApp();
     },
-    onFailure(err) {
-      setLoading("changePwBtn", false);
-      showAuthError("changePwError", err.message);
-    }
+    onFailure(err) { setLoading("changePwBtn", false); showAuthError("changePwError", err.message); }
   });
 }
 
-// ── Logout ─────────────────────────────────────
 function doLogout() {
   stopInactivityWatcher();
   if (cognitoUser) cognitoUser.signOut();
@@ -561,77 +407,56 @@ function doLogout() {
   showPage("loginPage");
 }
 
-// ── Inactividad — cierra sesión tras 10 min sin actividad ──
 const INACTIVITY_MS = 10 * 60 * 1000;
 var inactivityTimer = null;
-
 function resetInactivityTimer() {
   clearTimeout(inactivityTimer);
   inactivityTimer = setTimeout(() => {
-    if (cognitoUser) {
-      doLogout();
-      showToast("Sesión cerrada por inactividad", true);
-    }
+    if (cognitoUser) { doLogout(); showToast("Sesión cerrada por inactividad", true); }
   }, INACTIVITY_MS);
 }
-
 function startInactivityWatcher() {
   ["mousemove","mousedown","keydown","touchstart","scroll","click"].forEach(evt =>
-    document.addEventListener(evt, resetInactivityTimer, { passive: true })
-  );
+    document.addEventListener(evt, resetInactivityTimer, { passive: true }));
   resetInactivityTimer();
 }
-
 function stopInactivityWatcher() {
   clearTimeout(inactivityTimer);
   ["mousemove","mousedown","keydown","touchstart","scroll","click"].forEach(evt =>
-    document.removeEventListener(evt, resetInactivityTimer)
-  );
+    document.removeEventListener(evt, resetInactivityTimer));
 }
 
-// ── Detectar cuando el usuario vuelve a la pestaña ──
 document.addEventListener("visibilitychange", () => {
   if (document.visibilityState === "visible" && cognitoUser) {
     cognitoUser.getSession((err, session) => {
       if (err || !session || !session.isValid()) {
         stopInactivityWatcher();
-        cognitoUser.signOut();
-        cognitoUser = null;
-        idToken = null;
+        cognitoUser.signOut(); cognitoUser = null; idToken = null;
         showPage("loginPage");
-        // Toast especial de sesión expirada
         const t = document.getElementById("toast");
         t.textContent = "⏱ Sesión caducada — vuelve a iniciar sesión";
-        t.className = "toast error-toast";
-        t.classList.add("show");
+        t.className = "toast error-toast"; t.classList.add("show");
         setTimeout(() => t.classList.remove("show"), 4000);
       }
     });
   }
 });
 
-// Enter key + restaurar sesión cuando el DOM esté listo
 document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("loginPassword").addEventListener("keydown", e => { if(e.key==="Enter") doLogin(); });
   document.getElementById("loginEmail").addEventListener("keydown",    e => { if(e.key==="Enter") doLogin(); });
-
   const current = userPool.getCurrentUser();
   if (!current) return;
   current.getSession((err, session) => {
     if (err || !session.isValid()) return;
     cognitoUser = current;
     idToken = session.getIdToken().getJwtToken();
-    const email = session.getIdToken().payload.email || current.getUsername();
-    document.getElementById("userEmail").textContent = email;
-    showPage("appPage");
-    startInactivityWatcher();
-    initApp();
+    const displayName = current.getUsername();
+    document.getElementById("userEmail").textContent = displayName;
+    showPage("appPage"); startInactivityWatcher(); initApp();
   });
 });
 
-// ══════════════════════════════════════════════
-//  API — Lambda calls con JWT
-// ══════════════════════════════════════════════
 async function refreshToken() {
   return new Promise((res, rej) => {
     cognitoUser.getSession((err, session) => {
@@ -640,58 +465,64 @@ async function refreshToken() {
     });
   });
 }
-
 async function apiFetch(method, path, body) {
   await refreshToken();
-  const opts = {
-    method,
-    headers: {
-      "Authorization": `Bearer ${idToken}`,
-      "Content-Type": "application/json",
-    },
-  };
+  const opts = { method, headers: { "Authorization": `Bearer ${idToken}`, "Content-Type": "application/json" } };
   if (body) opts.body = JSON.stringify(body);
   const r = await fetch(CONFIG.lambdaUrl + (path || ""), opts);
   if (!r.ok) throw new Error(`HTTP ${r.status}`);
   return r.json();
 }
 
-// ══════════════════════════════════════════════
-//  SCHEDULE APP
-// ══════════════════════════════════════════════
 const SLOTS = [];
 const DAYS  = ["lunes","martes","miercoles","jueves","viernes","sabado","domingo"];
-const DAY_NAMES = {
-  lunes:"Lunes", martes:"Martes", miercoles:"Miércoles",
-  jueves:"Jueves", viernes:"Viernes", sabado:"Sábado", domingo:"Domingo"
-};
-
+const DAY_NAMES = { lunes:"Lunes", martes:"Martes", miercoles:"Miércoles", jueves:"Jueves", viernes:"Viernes", sabado:"Sábado", domingo:"Domingo" };
 for (let h = 5; h <= 23; h++) {
   const p = h < 12 ? "AM" : "PM";
   const d = h <= 12 ? h : h - 12;
   SLOTS.push({ id: `h${h}`, label: `${d}:00 ${p}` });
 }
 
-var currentDay  = "lunes";
-var saveDebounce = null;
+var currentDay = "lunes", saveDebounce = null, dragSrc = null, slotCounter = 0;
+function newSlotId() { return "s" + (++slotCounter) + "_" + Date.now(); }
 
 function setSyncStatus(s) {
   document.getElementById("syncDot").className = `sync-dot ${s}`;
-  document.getElementById("syncLabel").textContent =
-    { synced:"Sincronizado", syncing:"Guardando…", error:"Error al guardar" }[s];
+  document.getElementById("syncLabel").textContent = { synced:"Sincronizado", syncing:"Guardando…", error:"Error al guardar" }[s];
 }
 
-// Unique slot ID generator
-var slotCounter = 0;
-function newSlotId() { return "s" + (++slotCounter) + "_" + Date.now(); }
+// ── KEY FIX: parse any slot value format cleanly ──────────────────────────────
+function parseSlotValue(v, fallbackTime) {
+  // Already a proper JS object with time key
+  if (typeof v === "object" && v !== null && "time" in v) {
+    return { time: v.time || fallbackTime, activity: v.activity || "" };
+  }
+  // Python-style string: {'time': '8:00 AM', 'activity': 'Gym'}
+  if (typeof v === "string" && v.trim().startsWith("{")) {
+    try {
+      const fixed = v
+        .replace(/'/g, '"')
+        .replace(/None/g, "null")
+        .replace(/True/g, "true")
+        .replace(/False/g, "false");
+      const parsed = JSON.parse(fixed);
+      return { time: parsed.time || fallbackTime, activity: parsed.activity || "" };
+    } catch(e) { /* fall through to plain string */ }
+  }
+  // Plain string = old format, just activity text
+  if (typeof v === "string") {
+    return { time: fallbackTime, activity: v };
+  }
+  return { time: fallbackTime, activity: "" };
+}
 
 function collectData() {
   const data = {};
   document.querySelectorAll(".time-row").forEach(r => {
-    const timeVal = r.querySelector(".time-input").value.trim();
-    const actVal  = r.querySelector(".activity-input").value;
-    // store as { time, activity } keyed by slotId
-    data[r.dataset.slot] = { time: timeVal, activity: actVal };
+    data[r.dataset.slot] = {
+      time: r.querySelector(".time-input").value.trim(),
+      activity: r.querySelector(".activity-input").value
+    };
   });
   return data;
 }
@@ -704,221 +535,118 @@ function updateProgress() {
     r.classList.toggle("has-content", v.length > 0);
     if (v) filled++;
   });
-  const total = rows.length || 1;
-  const pct = Math.round(filled / total * 100);
+  const pct = Math.round(filled / (rows.length || 1) * 100);
   document.getElementById("progressFill").style.width = pct + "%";
-  document.getElementById("progressLabel").textContent =
-    `${filled} actividad${filled === 1 ? "" : "es"}`;
+  document.getElementById("progressLabel").textContent = `${filled} actividad${filled === 1 ? "" : "es"}`;
 }
 
 function makeRow(slotId, timeVal, actVal, animDelay) {
   const row = document.createElement("div");
-  row.className = "time-row";
-  row.dataset.slot = slotId;
+  row.className = "time-row"; row.dataset.slot = slotId;
   if (animDelay !== undefined) row.style.animationDelay = `${animDelay}ms`;
 
-  // Drag handle
   const handle = document.createElement("div");
-  handle.className = "drag-handle";
-  handle.innerHTML = "&#8942;&#8942;"; // ⋮⋮
-  handle.title = "Arrastra para reordenar";
+  handle.className = "drag-handle"; handle.innerHTML = "&#8942;&#8942;"; handle.title = "Arrastra para reordenar";
 
-  // Drag events on the row
   row.draggable = true;
-  row.addEventListener("dragstart", e => {
-    dragSrc = row;
-    row.classList.add("dragging");
-    e.dataTransfer.effectAllowed = "move";
-    e.dataTransfer.setDragImage(row, 0, 0);
-  });
-  row.addEventListener("dragend", () => {
-    row.classList.remove("dragging");
-    document.querySelectorAll(".time-row").forEach(r => r.classList.remove("drag-over"));
-    scheduleSave();
-  });
-  row.addEventListener("dragover", e => {
-    e.preventDefault();
-    e.dataTransfer.dropEffect = "move";
-    if (row !== dragSrc) {
-      document.querySelectorAll(".time-row").forEach(r => r.classList.remove("drag-over"));
-      row.classList.add("drag-over");
-    }
-  });
+  row.addEventListener("dragstart", e => { dragSrc = row; row.classList.add("dragging"); e.dataTransfer.effectAllowed = "move"; });
+  row.addEventListener("dragend", () => { row.classList.remove("dragging"); document.querySelectorAll(".time-row").forEach(r => r.classList.remove("drag-over")); scheduleSave(); });
+  row.addEventListener("dragover", e => { e.preventDefault(); if (row !== dragSrc) { document.querySelectorAll(".time-row").forEach(r => r.classList.remove("drag-over")); row.classList.add("drag-over"); } });
   row.addEventListener("dragleave", () => row.classList.remove("drag-over"));
   row.addEventListener("drop", e => {
-    e.preventDefault();
-    row.classList.remove("drag-over");
+    e.preventDefault(); row.classList.remove("drag-over");
     if (dragSrc && dragSrc !== row) {
       const list = document.getElementById("scheduleList");
       const rows = [...list.querySelectorAll(".time-row")];
-      const srcIdx  = rows.indexOf(dragSrc);
-      const destIdx = rows.indexOf(row);
-      if (srcIdx < destIdx) {
-        list.insertBefore(dragSrc, row.nextSibling);
-      } else {
-        list.insertBefore(dragSrc, row);
-      }
+      list.insertBefore(dragSrc, rows.indexOf(dragSrc) < rows.indexOf(row) ? row.nextSibling : row);
     }
   });
 
-  // Time label (editable input)
-  const lbl = document.createElement("div");
-  lbl.className = "time-label";
+  const lbl = document.createElement("div"); lbl.className = "time-label";
   const timeInp = document.createElement("input");
-  timeInp.type = "text";
-  timeInp.className = "time-input";
-  timeInp.value = timeVal;
-  timeInp.placeholder = "Hora";
-  timeInp.title = "Click para editar la hora";
+  timeInp.type = "text"; timeInp.className = "time-input"; timeInp.value = timeVal; timeInp.placeholder = "Hora";
   timeInp.addEventListener("change", () => scheduleSave());
-  // Prevent drag when typing in time input
   timeInp.addEventListener("mousedown", e => e.stopPropagation());
   lbl.appendChild(timeInp);
 
-  // Activity textarea
   const inp = document.createElement("textarea");
-  inp.className = "activity-input";
-  inp.placeholder = "Escribe tu actividad…";
-  inp.rows = 1;
-  inp.value = actVal;
+  inp.className = "activity-input"; inp.placeholder = "Escribe tu actividad…"; inp.rows = 1; inp.value = actVal;
   inp.addEventListener("input", function() {
-    this.style.height = "auto";
-    this.style.height = this.scrollHeight + "px";
-    updateProgress();
-    scheduleSave();
+    this.style.height = "auto"; this.style.height = this.scrollHeight + "px";
+    updateProgress(); scheduleSave();
   });
   inp.addEventListener("mousedown", e => e.stopPropagation());
 
-  // Delete button
-  const del = document.createElement("button");
-  del.className = "row-del";
-  del.innerHTML = "&#x2715;";
-  del.title = "Eliminar este bloque";
+  const del = document.createElement("button"); del.className = "row-del"; del.innerHTML = "&#x2715;"; del.title = "Eliminar";
   del.addEventListener("click", () => {
-    row.style.transition = "opacity .2s, transform .2s";
-    row.style.opacity = "0";
-    row.style.transform = "translateX(10px)";
+    row.style.transition = "opacity .2s, transform .2s"; row.style.opacity = "0"; row.style.transform = "translateX(10px)";
     setTimeout(() => { row.remove(); updateProgress(); scheduleSave(); }, 200);
   });
 
-  row.appendChild(handle);
-  row.appendChild(lbl);
-  row.appendChild(inp);
-  row.appendChild(del);
-
-  requestAnimationFrame(() => {
-    inp.style.height = "auto";
-    inp.style.height = inp.scrollHeight + "px";
-  });
-
+  row.appendChild(handle); row.appendChild(lbl); row.appendChild(inp); row.appendChild(del);
+  requestAnimationFrame(() => { inp.style.height = "auto"; inp.style.height = inp.scrollHeight + "px"; });
   return row;
 }
 
-var dragSrc = null;
-
 function buildRows(slots, dir) {
   const list = document.getElementById("scheduleList");
-  list.className = "";
-  list.innerHTML = "";
-
-  // slots can be old format { slotId: "text" } or new { slotId: {time, activity} }
-  // Build ordered entries
+  list.className = ""; list.innerHTML = "";
   let entries = [];
 
   if (slots && Object.keys(slots).length > 0) {
-    // Detect format: new format has objects as values
-    const firstVal = Object.values(slots)[0];
-    if (typeof firstVal === "object" && firstVal !== null && "time" in firstVal) {
-      // New format — preserve order by time label
-      entries = Object.entries(slots).map(([id, v]) => ({
-        slotId: id, time: v.time || "", activity: v.activity || ""
-      }));
-    } else {
-      // Old format — migrate: use SLOTS labels as time
-      SLOTS.forEach(slot => {
-        if (slots[slot.id] !== undefined) {
-          entries.push({ slotId: slot.id, time: slot.label, activity: slots[slot.id] || "" });
-        }
-      });
-    }
-  } else {
-    // Default: all SLOTS empty
-    SLOTS.forEach(slot => {
-      entries.push({ slotId: slot.id, time: slot.label, activity: "" });
+    entries = Object.entries(slots).map(([id, v], index) => {
+      const fallback = SLOTS[index] ? SLOTS[index].label : "";
+      const parsed = parseSlotValue(v, fallback);
+      return { slotId: id, time: parsed.time, activity: parsed.activity };
     });
+  } else {
+    SLOTS.forEach(slot => entries.push({ slotId: slot.id, time: slot.label, activity: "" }));
   }
 
-  entries.forEach((e, i) => {
-    list.appendChild(makeRow(e.slotId, e.time, e.activity, i * 14));
-  });
+  entries.forEach((e, i) => list.appendChild(makeRow(e.slotId, e.time, e.activity, i * 14)));
 
-  // Add row button
   const addBtn = document.createElement("button");
   addBtn.className = "add-row-btn";
   addBtn.innerHTML = `<span style="font-size:1rem;line-height:1">+</span> Agregar bloque`;
   addBtn.addEventListener("click", () => {
     const newId = newSlotId();
     const newRow = makeRow(newId, "", "", undefined);
-    newRow.style.opacity = "0";
-    newRow.style.transform = "translateX(20px)";
+    newRow.style.opacity = "0"; newRow.style.transform = "translateX(20px)";
     list.insertBefore(newRow, addBtn);
-    requestAnimationFrame(() => {
-      newRow.style.transition = "opacity .25s, transform .25s";
-      newRow.style.opacity = "1";
-      newRow.style.transform = "translateX(0)";
-    });
+    requestAnimationFrame(() => { newRow.style.transition = "opacity .25s, transform .25s"; newRow.style.opacity = "1"; newRow.style.transform = "translateX(0)"; });
     newRow.querySelector(".time-input").focus();
     scheduleSave();
   });
   list.appendChild(addBtn);
 
-  if (dir) requestAnimationFrame(() =>
-    list.classList.add(dir === "right" ? "slide-right" : "slide-left"));
-
+  if (dir) requestAnimationFrame(() => list.classList.add(dir === "right" ? "slide-right" : "slide-left"));
   updateProgress();
 }
 
 async function loadDay(day, dir) {
   document.getElementById("cardDayName").textContent = DAY_NAMES[day];
-  buildRows({}, null); // muestra vacío mientras carga
+  buildRows({}, null);
   try {
     const data = await apiFetch("GET", `?day=${day}`);
     buildRows(data.slots || {}, dir);
     if (data.updatedAt) {
-      const d = new Date(data.updatedAt);
-      document.getElementById("lastSaved").textContent =
-        `Último guardado: ${d.toLocaleTimeString("es")}`;
+      document.getElementById("lastSaved").textContent = `Último guardado: ${new Date(data.updatedAt).toLocaleTimeString("es")}`;
     }
     setSyncStatus("synced");
   } catch {
-    showToast("No se pudo cargar del servidor", true);
-    setSyncStatus("error");
+    showToast("No se pudo cargar del servidor", true); setSyncStatus("error");
   }
 }
 
-function scheduleSave() {
-  setSyncStatus("syncing");
-  clearTimeout(saveDebounce);
-  saveDebounce = setTimeout(saveDay, 1200);
-}
+function scheduleSave() { setSyncStatus("syncing"); clearTimeout(saveDebounce); saveDebounce = setTimeout(saveDay, 1200); }
 
 async function saveDay() {
   setSyncStatus("syncing");
   try {
     await apiFetch("PUT", "", { day: currentDay, slots: collectData() });
     setSyncStatus("synced");
-    document.getElementById("lastSaved").textContent =
-      `Último guardado: ${new Date().toLocaleTimeString("es")}`;
-  } catch {
-    setSyncStatus("error");
-    showToast("Error al guardar", true);
-  }
-}
-
-async function clearDay() {
-  if (!confirm(`¿Limpiar las actividades del ${DAY_NAMES[currentDay]}?`)) return;
-  buildRows({}, null);
-  await saveDay();
+    document.getElementById("lastSaved").textContent = `Último guardado: ${new Date().toLocaleTimeString("es")}`;
+  } catch { setSyncStatus("error"); showToast("Error al guardar", true); }
 }
 
 async function switchDay(day) {
@@ -926,26 +654,21 @@ async function switchDay(day) {
   const dir = DAYS.indexOf(day) > DAYS.indexOf(currentDay) ? "right" : "left";
   currentDay = day;
   localStorage.setItem("hp_last_day", day);
-  document.querySelectorAll(".day-pill").forEach(p =>
-    p.classList.toggle("active", p.dataset.day === day));
+  document.querySelectorAll(".day-pill").forEach(p => p.classList.toggle("active", p.dataset.day === day));
   await loadDay(day, dir);
 }
 
 function showToast(msg, isError = false) {
   const t = document.getElementById("toast");
-  t.textContent = msg;
-  t.className = "toast" + (isError ? " error-toast" : "");
-  t.classList.add("show");
-  setTimeout(() => t.classList.remove("show"), 2400);
+  t.textContent = msg; t.className = "toast" + (isError ? " error-toast" : "");
+  t.classList.add("show"); setTimeout(() => t.classList.remove("show"), 2400);
 }
 
 function initApp() {
-  // Restaurar el último día visitado, si no existe usar hoy
   const saved = localStorage.getItem("hp_last_day");
   const jsDay = ["domingo","lunes","martes","miercoles","jueves","viernes","sabado"][new Date().getDay()];
   currentDay = (saved && DAYS.includes(saved)) ? saved : (jsDay || "lunes");
-  document.querySelectorAll(".day-pill").forEach(p =>
-    p.classList.toggle("active", p.dataset.day === currentDay));
+  document.querySelectorAll(".day-pill").forEach(p => p.classList.toggle("active", p.dataset.day === currentDay));
   loadDay(currentDay, null);
 }
 
