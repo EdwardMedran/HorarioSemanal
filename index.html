@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Horario Personal</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/amazon-cognito-identity-js@6/dist/amazon-cognito-identity.min.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0a0a0f;--surface:#111118;--surface2:#1a1a24;
+  --border:#ffffff0d;--border-hover:#ffffff1a;
+  --text:#f0f0f8;--muted:#6b6b80;
+  --accent:#7c6aff;--accent2:#ff6ab0;--accent3:#6affda;
+  --red:#ff5f6d;--glow:rgba(124,106,255,.35);
+}
+body{font-family:'Space Grotesk',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;}
+
+.ambient{position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:radial-gradient(ellipse 60% 50% at 15% 20%,rgba(124,106,255,.12) 0%,transparent 70%),
+             radial-gradient(ellipse 50% 40% at 85% 80%,rgba(255,106,176,.10) 0%,transparent 70%);}
+.grid-lines{position:fixed;inset:0;pointer-events:none;z-index:0;
+  background-image:linear-gradient(var(--border) 1px,transparent 1px),linear-gradient(90deg,var(--border) 1px,transparent 1px);
+  background-size:60px 60px;
+  mask-image:radial-gradient(ellipse 80% 80% at 50% 50%,black 40%,transparent 100%);}
+
+/* ── Pages ── */
+.page{position:fixed;inset:0;z-index:10;display:flex;align-items:center;justify-content:center;padding:1.5rem;
+  transition:opacity .35s,transform .35s;will-change:transform,opacity;}
+.page.hidden{opacity:0;pointer-events:none;transform:scale(.96);}
+
+/* ── Auth card ── */
+.auth-card{background:var(--surface);border:1px solid var(--border);border-radius:24px;
+  width:100%;max-width:400px;padding:2.5rem 2rem;
+  box-shadow:0 32px 80px rgba(0,0,0,.6);
+  animation:cardIn .5s cubic-bezier(.22,1,.36,1) both;}
+@keyframes cardIn{from{opacity:0;transform:translateY(24px) scale(.97)}to{opacity:1;transform:none}}
+
+.auth-logo{text-align:center;margin-bottom:2rem;}
+.auth-logo h1{font-family:'Syne',sans-serif;font-size:1.9rem;font-weight:800;line-height:1;
+  background:linear-gradient(135deg,#fff 0%,rgba(255,255,255,.5) 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.auth-logo h1 span{background:linear-gradient(135deg,var(--accent),var(--accent2));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.auth-logo p{font-size:.75rem;color:var(--muted);letter-spacing:.12em;text-transform:uppercase;margin-top:.3rem;}
+
+.auth-title{font-family:'Syne',sans-serif;font-size:1.15rem;font-weight:700;margin-bottom:.3rem;}
+.auth-subtitle{font-size:.82rem;color:var(--muted);margin-bottom:1.8rem;line-height:1.5;}
+
+.field{margin-bottom:1.1rem;}
+.field label{display:block;font-size:.72rem;font-weight:600;color:var(--muted);letter-spacing:.1em;
+  text-transform:uppercase;margin-bottom:.45rem;}
+.field input{width:100%;background:var(--surface2);border:1px solid var(--border-hover);
+  border-radius:10px;padding:.75rem 1rem;font-family:'Space Grotesk',sans-serif;
+  font-size:.9rem;color:var(--text);outline:none;transition:border-color .2s,box-shadow .2s;}
+.field input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(124,106,255,.15);}
+.field input::placeholder{color:var(--muted);opacity:.5;}
+.field-hint{font-size:.7rem;color:var(--muted);margin-top:.4rem;line-height:1.4;}
+
+.auth-error{background:rgba(255,95,109,.1);border:1px solid rgba(255,95,109,.25);
+  border-radius:8px;padding:.65rem 1rem;font-size:.8rem;color:var(--red);
+  margin-bottom:1.1rem;display:none;}
+.auth-error.show{display:block;}
+
+.btn-main{width:100%;border:none;border-radius:10px;padding:.85rem;cursor:pointer;
+  font-family:'Space Grotesk',sans-serif;font-size:.88rem;font-weight:600;letter-spacing:.04em;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;
+  box-shadow:0 0 20px rgba(124,106,255,.4);transition:all .2s;position:relative;overflow:hidden;}
+.btn-main:hover{box-shadow:0 0 30px rgba(124,106,255,.6);transform:translateY(-1px);}
+.btn-main:disabled{opacity:.5;cursor:not-allowed;transform:none;}
+.btn-main .spinner{display:none;width:16px;height:16px;border:2px solid rgba(255,255,255,.3);
+  border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;margin:0 auto;}
+.btn-main.loading .btn-text{display:none;}
+.btn-main.loading .spinner{display:block;}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+.strength-bar{display:flex;gap:4px;margin-top:.5rem;}
+.strength-bar span{flex:1;height:3px;border-radius:2px;background:var(--border-hover);transition:background .3s;}
+.strength-label{font-size:.68rem;color:var(--muted);margin-top:.35rem;}
+
+/* ── App ── */
+#appPage{position:relative;z-index:1;overflow-y:auto;}
+#appPage:not(.hidden){position:relative;min-height:100vh;}
+.container{max-width:680px;margin:0 auto;padding:0 1.25rem 5rem;}
+
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:1.5rem 0 0;}
+.topbar-logo{font-family:'Syne',sans-serif;font-size:1rem;font-weight:800;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.topbar-right{display:flex;align-items:center;gap:.8rem;}
+.user-badge{font-size:.75rem;color:var(--muted);display:flex;align-items:center;gap:.4rem;}
+.user-dot{width:7px;height:7px;border-radius:50%;background:var(--accent3);animation:pulse-dot 2s ease infinite;}
+@keyframes pulse-dot{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.7)}}
+.btn-logout{cursor:pointer;border:1px solid var(--border-hover);background:transparent;
+  border-radius:7px;padding:.3rem .8rem;font-family:'Space Grotesk',sans-serif;
+  font-size:.7rem;color:var(--muted);transition:all .18s;}
+.btn-logout:hover{color:var(--red);border-color:rgba(255,95,109,.4);}
+
+header{padding:2rem 0 1.8rem;text-align:center;}
+.badge{display:inline-flex;align-items:center;gap:6px;
+  background:rgba(124,106,255,.12);border:1px solid rgba(124,106,255,.25);
+  border-radius:100px;padding:4px 14px;
+  font-size:.68rem;letter-spacing:.2em;text-transform:uppercase;color:var(--accent);margin-bottom:1rem;}
+h1{font-family:'Syne',sans-serif;font-size:clamp(2rem,6vw,3.5rem);font-weight:800;
+  line-height:1;letter-spacing:-.02em;
+  background:linear-gradient(135deg,#fff 0%,rgba(255,255,255,.5) 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+h1 span{background:linear-gradient(135deg,var(--accent),var(--accent2));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+
+.day-nav{display:flex;gap:.4rem;padding:.25rem 0 1rem;justify-content:center;flex-wrap:wrap;}
+.day-pill{flex-shrink:0;cursor:pointer;border:1px solid var(--border);background:var(--surface);
+  border-radius:100px;padding:.45rem 1.1rem;font-size:.8rem;font-weight:500;color:var(--muted);
+  transition:all .25s cubic-bezier(.34,1.56,.64,1);position:relative;overflow:hidden;user-select:none;}
+.day-pill::before{content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));opacity:0;transition:opacity .2s;}
+.day-pill span{position:relative;z-index:1;}
+.day-pill:hover{border-color:var(--border-hover);color:var(--text);transform:translateY(-2px) scale(1.05);}
+.day-pill.active{border-color:transparent;color:#fff;transform:translateY(-3px) scale(1.07);
+  box-shadow:0 0 22px var(--glow),0 6px 18px rgba(0,0,0,.45);}
+.day-pill.active::before{opacity:1;}
+
+.card{background:var(--surface);border:1px solid var(--border);border-radius:20px;overflow:hidden;
+  box-shadow:0 24px 64px rgba(0,0,0,.55);}
+.card-head{padding:1.2rem 1.6rem;display:flex;align-items:center;justify-content:space-between;
+  border-bottom:1px solid var(--border);
+  background:linear-gradient(135deg,rgba(124,106,255,.08),rgba(255,106,176,.05));}
+.card-day{font-family:'Syne',sans-serif;font-size:1.3rem;font-weight:700;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.card-actions{display:flex;gap:.5rem;}
+.btn{cursor:pointer;border:1px solid var(--border-hover);background:var(--surface2);
+  border-radius:8px;padding:.4rem .9rem;font-family:'Space Grotesk',sans-serif;
+  font-size:.72rem;font-weight:500;color:var(--muted);transition:all .18s;}
+.btn:hover{color:var(--text);border-color:var(--accent);background:rgba(124,106,255,.1);}
+.btn.primary{background:linear-gradient(135deg,var(--accent),var(--accent2));
+  border-color:transparent;color:#fff;box-shadow:0 0 14px rgba(124,106,255,.4);}
+.btn.primary:hover{box-shadow:0 0 24px rgba(124,106,255,.65);transform:translateY(-1px);}
+
+.sync-row{padding:.6rem 1.6rem;display:flex;align-items:center;justify-content:space-between;
+  border-bottom:1px solid var(--border);}
+.sync-status{font-size:.68rem;color:var(--muted);display:flex;align-items:center;gap:.4rem;}
+.sync-dot{width:5px;height:5px;border-radius:50%;background:var(--muted);transition:background .3s;}
+.sync-dot.synced{background:var(--accent3);}
+.sync-dot.syncing{background:var(--accent);animation:pulse-dot 1s ease infinite;}
+.sync-dot.error{background:var(--red);}
+
+.progress-wrap{padding:.7rem 1.6rem .4rem;display:flex;align-items:center;gap:10px;}
+.progress-bar{flex:1;height:3px;background:rgba(255,255,255,.06);border-radius:3px;overflow:hidden;}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));
+  border-radius:3px;transition:width .5s cubic-bezier(.34,1.56,.64,1);}
+.progress-label{font-size:.68rem;color:var(--muted);white-space:nowrap;}
+
+.list-clip{overflow:hidden;}
+.time-row{display:grid;grid-template-columns:88px 1fr;border-bottom:1px solid var(--border);
+  position:relative;transition:background .18s;}
+.time-row:last-child{border-bottom:none;}
+.time-row::after{content:'';position:absolute;left:0;top:0;bottom:0;width:2px;
+  background:linear-gradient(180deg,var(--accent),var(--accent2));
+  opacity:0;transition:opacity .22s,transform .22s;transform:scaleY(.4);}
+.time-row:hover::after,.time-row:focus-within::after{opacity:1;transform:scaleY(1);}
+.time-row:hover{background:rgba(255,255,255,.022);}
+.time-row:focus-within{background:rgba(124,106,255,.055);}
+.time-label{padding:1rem .7rem .9rem 1.2rem;font-size:.72rem;font-weight:600;color:var(--muted);
+  letter-spacing:.06em;white-space:nowrap;border-right:1px solid var(--border);
+  display:flex;align-items:flex-start;transition:color .2s;}
+.time-row:hover .time-label,.time-row:focus-within .time-label{color:rgba(124,106,255,.9);}
+.time-row.has-content .time-label{color:var(--accent3);}
+.activity-input{width:100%;border:none;background:transparent;
+  font-family:'Space Grotesk',sans-serif;font-size:.9rem;color:var(--text);
+  padding:.9rem 1.3rem .9rem .9rem;outline:none;resize:none;min-height:50px;
+  line-height:1.5;caret-color:var(--accent);}
+.activity-input::placeholder{color:var(--muted);opacity:.38;font-style:italic;font-weight:300;}
+
+@keyframes slideInRight{from{opacity:0;transform:translateX(40px)}to{opacity:1;transform:translateX(0)}}
+@keyframes slideInLeft{from{opacity:0;transform:translateX(-40px)}to{opacity:1;transform:translateX(0)}}
+.slide-right .time-row{animation:slideInRight .32s cubic-bezier(.22,1,.36,1) both;}
+.slide-left  .time-row{animation:slideInLeft  .32s cubic-bezier(.22,1,.36,1) both;}
+
+.toast{position:fixed;bottom:2rem;left:50%;transform:translateX(-50%) translateY(20px);
+  background:rgba(106,255,218,.1);border:1px solid rgba(106,255,218,.22);
+  color:var(--accent3);border-radius:100px;padding:.55rem 1.5rem;
+  font-size:.78rem;letter-spacing:.08em;opacity:0;
+  transition:all .3s cubic-bezier(.34,1.56,.64,1);pointer-events:none;
+  white-space:nowrap;z-index:100;backdrop-filter:blur(12px);}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+.toast.error-toast{background:rgba(255,95,109,.1);border-color:rgba(255,95,109,.25);color:var(--red);}
+
+::-webkit-scrollbar{width:4px;}
+::-webkit-scrollbar-thumb{background:var(--border-hover);border-radius:4px;}
+</style>
+</head>
+<body>
+<div class="ambient"></div>
+<div class="grid-lines"></div>
+
+<!-- ══ LOGIN ══ -->
+<div class="page" id="loginPage">
+  <div class="auth-card">
+    <div class="auth-logo">
+      <h1>Horario <span>Personal</span></h1>
+      <p>Planificador Semanal</p>
+    </div>
+    <h2 class="auth-title">Iniciar sesión</h2>
+    <p class="auth-subtitle">Ingresa con tu cuenta para acceder a tu horario.</p>
+    <div class="auth-error" id="loginError"></div>
+    <div class="field">
+      <label>Correo electrónico</label>
+      <input type="email" id="loginEmail" placeholder="tu@correo.com" autocomplete="email"/>
+    </div>
+    <div class="field">
+      <label>Contraseña</label>
+      <input type="password" id="loginPassword" placeholder="••••••••" autocomplete="current-password"/>
+    </div>
+    <button class="btn-main" id="loginBtn" onclick="doLogin()">
+      <span class="btn-text">Entrar</span>
+      <div class="spinner"></div>
+    </button>
+  </div>
+</div>
+
+<!-- ══ CAMBIAR CONTRASEÑA (primer login) ══ -->
+<div class="page hidden" id="changePwPage">
+  <div class="auth-card">
+    <div class="auth-logo">
+      <h1>Horario <span>Personal</span></h1>
+    </div>
+    <h2 class="auth-title">Crea tu contraseña</h2>
+    <p class="auth-subtitle">Es tu primer inicio de sesión. Elige una contraseña que usarás de ahora en adelante.</p>
+    <div class="auth-error" id="changePwError"></div>
+    <div class="field">
+      <label>Nueva contraseña</label>
+      <input type="password" id="newPassword" placeholder="Mínimo 8 caracteres"
+             autocomplete="new-password" oninput="checkStrength(this.value)"/>
+      <div class="strength-bar">
+        <span id="s1"></span><span id="s2"></span><span id="s3"></span><span id="s4"></span>
+      </div>
+      <p class="strength-label" id="strengthLabel">—</p>
+    </div>
+    <div class="field">
+      <label>Confirmar contraseña</label>
+      <input type="password" id="confirmPassword" placeholder="Repite tu contraseña" autocomplete="new-password"/>
+      <p class="field-hint">Mínimo 8 caracteres, una mayúscula y un número.</p>
+    </div>
+    <button class="btn-main" id="changePwBtn" onclick="doChangePassword()">
+      <span class="btn-text">Guardar contraseña</span>
+      <div class="spinner"></div>
+    </button>
+  </div>
+</div>
+
+<!-- ══ APP ══ -->
+<div class="page hidden" id="appPage">
+  <div class="container" style="width:100%">
+    <div class="topbar">
+      <span class="topbar-logo">HP</span>
+      <div class="topbar-right">
+        <span class="user-badge"><span class="user-dot"></span><span id="userEmail">—</span></span>
+        <button class="btn-logout" onclick="doLogout()">Salir</button>
+      </div>
+    </div>
+    <header>
+      <div class="badge"><span style="width:6px;height:6px;border-radius:50%;background:var(--accent);display:inline-block;animation:pulse-dot 2s ease infinite"></span>&nbsp;Planificador Semanal</div>
+      <h1>Horario <span>Personal</span></h1>
+    </header>
+    <nav class="day-nav" id="dayNav">
+      <div class="day-pill active" data-day="lunes"><span>Lun</span></div>
+      <div class="day-pill" data-day="martes"><span>Mar</span></div>
+      <div class="day-pill" data-day="miercoles"><span>Mié</span></div>
+      <div class="day-pill" data-day="jueves"><span>Jue</span></div>
+      <div class="day-pill" data-day="viernes"><span>Vie</span></div>
+      <div class="day-pill" data-day="sabado"><span>Sáb</span></div>
+      <div class="day-pill" data-day="domingo"><span>Dom</span></div>
+    </nav>
+    <div class="card">
+      <div class="card-head">
+        <span class="card-day" id="cardDayName">Lunes</span>
+        <div class="card-actions">
+          <button class="btn" onclick="clearDay()">Limpiar</button>
+          <button class="btn primary" onclick="saveDay()">Guardar</button>
+        </div>
+      </div>
+      <div class="sync-row">
+        <span class="sync-status">
+          <span class="sync-dot synced" id="syncDot"></span>
+          <span id="syncLabel">Sincronizado</span>
+        </span>
+        <span style="font-size:.68rem;color:var(--muted)" id="lastSaved"></span>
+      </div>
+      <div class="progress-wrap">
+        <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+        <span class="progress-label" id="progressLabel">0 actividades</span>
+      </div>
+      <div class="list-clip">
+        <div id="scheduleList"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ══════════════════════════════════════════════
+//  CONFIG — tus valores reales de AWS
+// ══════════════════════════════════════════════
+const CONFIG = {
+  region:     "sa-east-1",
+  userPoolId: "sa-east-1_eTpI9ADWH",
+  clientId:   "1id90v3t1hgtmfeqb8sv9sa784",
+  lambdaUrl:  "https://pnohfzljrksvzth3h7pifd4hma0iwcdt.lambda-url.sa-east-1.on.aws",
+};
+
+// ══════════════════════════════════════════════
+//  COGNITO AUTH
+// ══════════════════════════════════════════════
+const userPool = new AmazonCognitoIdentity.CognitoUserPool({
+  UserPoolId: CONFIG.userPoolId,
+  ClientId:   CONFIG.clientId,
+});
+
+let cognitoUser = null;
+let idToken     = null;
+
+function showPage(id) {
+  ["loginPage","changePwPage","appPage"].forEach(p => {
+    document.getElementById(p).classList.toggle("hidden", p !== id);
+  });
+}
+function setLoading(btnId, on) {
+  const b = document.getElementById(btnId);
+  b.classList.toggle("loading", on);
+  b.disabled = on;
+}
+function showAuthError(id, msg) {
+  const el = document.getElementById(id);
+  el.textContent = msg;
+  el.classList.add("show");
+}
+function clearAuthError(id) {
+  document.getElementById(id).classList.remove("show");
+}
+
+// ── Login ──────────────────────────────────────
+function doLogin() {
+  clearAuthError("loginError");
+  const email = document.getElementById("loginEmail").value.trim();
+  const pass  = document.getElementById("loginPassword").value;
+  if (!email || !pass) { showAuthError("loginError","Completa todos los campos."); return; }
+
+  setLoading("loginBtn", true);
+
+  const authDetails = new AmazonCognitoIdentity.AuthenticationDetails({ Username: email, Password: pass });
+  cognitoUser = new AmazonCognitoIdentity.CognitoUser({ Username: email, Pool: userPool });
+
+  cognitoUser.authenticateUser(authDetails, {
+    onSuccess(session) {
+      idToken = session.getIdToken().getJwtToken();
+      document.getElementById("userEmail").textContent = email;
+      setLoading("loginBtn", false);
+      showPage("appPage");
+      initApp();
+    },
+    onFailure(err) {
+      setLoading("loginBtn", false);
+      const msgs = {
+        NotAuthorizedException:    "Correo o contraseña incorrectos.",
+        UserNotFoundException:     "No existe una cuenta con ese correo.",
+        UserNotConfirmedException: "Cuenta no verificada. Revisa tu correo.",
+      };
+      showAuthError("loginError", msgs[err.code] || err.message);
+    },
+    newPasswordRequired() {
+      setLoading("loginBtn", false);
+      showPage("changePwPage");
+    }
+  });
+}
+
+// ── Cambio de contraseña (primer login) ────────
+function checkStrength(pw) {
+  const bars   = ["s1","s2","s3","s4"].map(id => document.getElementById(id));
+  const colors = ["#ff5f6d","#ff9f43","#ffd32a","#6affda"];
+  const labels = ["Muy débil","Débil","Aceptable","Fuerte"];
+  let score = 0;
+  if (pw.length >= 8)        score++;
+  if (/[A-Z]/.test(pw))      score++;
+  if (/[0-9]/.test(pw))      score++;
+  if (/[^A-Za-z0-9]/.test(pw)) score++;
+  bars.forEach((b,i) => b.style.background = i < score ? colors[score-1] : "var(--border-hover)");
+  const lbl = document.getElementById("strengthLabel");
+  lbl.textContent = pw ? (labels[score-1] || "Muy débil") : "—";
+  lbl.style.color  = pw ? colors[score-1] : "var(--muted)";
+}
+
+function doChangePassword() {
+  clearAuthError("changePwError");
+  const np = document.getElementById("newPassword").value;
+  const cp = document.getElementById("confirmPassword").value;
+  if (!np || !cp)       { showAuthError("changePwError","Completa los dos campos."); return; }
+  if (np !== cp)        { showAuthError("changePwError","Las contraseñas no coinciden."); return; }
+  if (np.length < 8)    { showAuthError("changePwError","Mínimo 8 caracteres."); return; }
+  if (!/[A-Z]/.test(np)){ showAuthError("changePwError","Incluye al menos una mayúscula."); return; }
+  if (!/[0-9]/.test(np)){ showAuthError("changePwError","Incluye al menos un número."); return; }
+
+  setLoading("changePwBtn", true);
+  cognitoUser.completeNewPasswordChallenge(np, {}, {
+    onSuccess(session) {
+      idToken = session.getIdToken().getJwtToken();
+      const email = document.getElementById("loginEmail").value.trim();
+      document.getElementById("userEmail").textContent = email;
+      setLoading("changePwBtn", false);
+      showPage("appPage");
+      initApp();
+    },
+    onFailure(err) {
+      setLoading("changePwBtn", false);
+      showAuthError("changePwError", err.message);
+    }
+  });
+}
+
+// ── Logout ─────────────────────────────────────
+function doLogout() {
+  if (cognitoUser) cognitoUser.signOut();
+  idToken = null; cognitoUser = null;
+  showPage("loginPage");
+}
+
+// Enter key
+document.addEventListener("DOMContentLoaded", () => {
+  document.getElementById("loginPassword").addEventListener("keydown", e => { if(e.key==="Enter") doLogin(); });
+  document.getElementById("loginEmail").addEventListener("keydown",    e => { if(e.key==="Enter") doLogin(); });
+});
+
+// Restaurar sesión existente
+;(function restoreSession() {
+  const current = userPool.getCurrentUser();
+  if (!current) return;
+  current.getSession((err, session) => {
+    if (err || !session.isValid()) return;
+    cognitoUser = current;
+    idToken = session.getIdToken().getJwtToken();
+    const email = session.getIdToken().payload.email || current.getUsername();
+    document.getElementById("userEmail").textContent = email;
+    showPage("appPage");
+    initApp();
+  });
+})();
+
+// ══════════════════════════════════════════════
+//  API — Lambda calls con JWT
+// ══════════════════════════════════════════════
+async function refreshToken() {
+  return new Promise((res, rej) => {
+    cognitoUser.getSession((err, session) => {
+      if (err) rej(err);
+      else { idToken = session.getIdToken().getJwtToken(); res(); }
+    });
+  });
+}
+
+async function apiFetch(method, path, body) {
+  await refreshToken();
+  const opts = {
+    method,
+    headers: {
+      "Authorization": `Bearer ${idToken}`,
+      "Content-Type": "application/json",
+    },
+  };
+  if (body) opts.body = JSON.stringify(body);
+  const r = await fetch(CONFIG.lambdaUrl + (path || ""), opts);
+  if (!r.ok) throw new Error(`HTTP ${r.status}`);
+  return r.json();
+}
+
+// ══════════════════════════════════════════════
+//  SCHEDULE APP
+// ══════════════════════════════════════════════
+const SLOTS = [];
+const DAYS  = ["lunes","martes","miercoles","jueves","viernes","sabado","domingo"];
+const DAY_NAMES = {
+  lunes:"Lunes", martes:"Martes", miercoles:"Miércoles",
+  jueves:"Jueves", viernes:"Viernes", sabado:"Sábado", domingo:"Domingo"
+};
+
+for (let h = 5; h <= 23; h++) {
+  const p = h < 12 ? "AM" : "PM";
+  const d = h <= 12 ? h : h - 12;
+  SLOTS.push({ id: `h${h}`, label: `${d}:00 ${p}` });
+}
+
+let currentDay  = "lunes";
+let saveDebounce = null;
+
+function setSyncStatus(s) {
+  document.getElementById("syncDot").className = `sync-dot ${s}`;
+  document.getElementById("syncLabel").textContent =
+    { synced:"Sincronizado", syncing:"Guardando…", error:"Error al guardar" }[s];
+}
+
+function collectData() {
+  const data = {};
+  document.querySelectorAll(".time-row").forEach(r => {
+    data[r.dataset.slot] = r.querySelector(".activity-input").value;
+  });
+  return data;
+}
+
+function updateProgress() {
+  let filled = 0;
+  document.querySelectorAll(".time-row").forEach(r => {
+    const v = r.querySelector(".activity-input").value.trim();
+    r.classList.toggle("has-content", v.length > 0);
+    if (v) filled++;
+  });
+  const pct = Math.round(filled / SLOTS.length * 100);
+  document.getElementById("progressFill").style.width = pct + "%";
+  document.getElementById("progressLabel").textContent =
+    `${filled} actividad${filled === 1 ? "" : "es"}`;
+}
+
+function buildRows(slots, dir) {
+  const list = document.getElementById("scheduleList");
+  list.className = "";
+  list.innerHTML = "";
+
+  SLOTS.forEach((slot, i) => {
+    const row = document.createElement("div");
+    row.className = "time-row";
+    row.dataset.slot = slot.id;
+    row.style.animationDelay = `${i * 14}ms`;
+
+    const lbl = document.createElement("div");
+    lbl.className = "time-label";
+    lbl.textContent = slot.label;
+
+    const inp = document.createElement("textarea");
+    inp.className = "activity-input";
+    inp.placeholder = "Escribe tu actividad…";
+    inp.rows = 1;
+    inp.value = slots[slot.id] || "";
+
+    inp.addEventListener("input", function() {
+      this.style.height = "auto";
+      this.style.height = this.scrollHeight + "px";
+      updateProgress();
+      scheduleSave();
+    });
+
+    row.appendChild(lbl);
+    row.appendChild(inp);
+    list.appendChild(row);
+
+    requestAnimationFrame(() => {
+      inp.style.height = "auto";
+      inp.style.height = inp.scrollHeight + "px";
+    });
+  });
+
+  if (dir) requestAnimationFrame(() =>
+    list.classList.add(dir === "right" ? "slide-right" : "slide-left"));
+
+  updateProgress();
+}
+
+async function loadDay(day, dir) {
+  document.getElementById("cardDayName").textContent = DAY_NAMES[day];
+  buildRows({}, null); // muestra vacío mientras carga
+  try {
+    const data = await apiFetch("GET", `?day=${day}`);
+    buildRows(data.slots || {}, dir);
+    if (data.updatedAt) {
+      const d = new Date(data.updatedAt);
+      document.getElementById("lastSaved").textContent =
+        `Último guardado: ${d.toLocaleTimeString("es")}`;
+    }
+    setSyncStatus("synced");
+  } catch {
+    showToast("No se pudo cargar del servidor", true);
+    setSyncStatus("error");
+  }
+}
+
+function scheduleSave() {
+  setSyncStatus("syncing");
+  clearTimeout(saveDebounce);
+  saveDebounce = setTimeout(saveDay, 1200);
+}
+
+async function saveDay() {
+  setSyncStatus("syncing");
+  try {
+    await apiFetch("PUT", "", { day: currentDay, slots: collectData() });
+    setSyncStatus("synced");
+    document.getElementById("lastSaved").textContent =
+      `Último guardado: ${new Date().toLocaleTimeString("es")}`;
+  } catch {
+    setSyncStatus("error");
+    showToast("Error al guardar", true);
+  }
+}
+
+async function clearDay() {
+  if (!confirm(`¿Limpiar las actividades del ${DAY_NAMES[currentDay]}?`)) return;
+  buildRows({}, null);
+  await saveDay();
+}
+
+async function switchDay(day) {
+  if (day === currentDay) return;
+  const dir = DAYS.indexOf(day) > DAYS.indexOf(currentDay) ? "right" : "left";
+  currentDay = day;
+  document.querySelectorAll(".day-pill").forEach(p =>
+    p.classList.toggle("active", p.dataset.day === day));
+  await loadDay(day, dir);
+}
+
+function showToast(msg, isError = false) {
+  const t = document.getElementById("toast");
+  t.textContent = msg;
+  t.className = "toast" + (isError ? " error-toast" : "");
+  t.classList.add("show");
+  setTimeout(() => t.classList.remove("show"), 2400);
+}
+
+function initApp() {
+  const jsDay = ["domingo","lunes","martes","miercoles","jueves","viernes","sabado"][new Date().getDay()];
+  currentDay = jsDay || "lunes";
+  document.querySelectorAll(".day-pill").forEach(p =>
+    p.classList.toggle("active", p.dataset.day === currentDay));
+  loadDay(currentDay, null);
+}
+
+document.getElementById("dayNav").addEventListener("click", e => {
+  const pill = e.target.closest(".day-pill");
+  if (pill) switchDay(pill.dataset.day);
+});
+</script>
+</body>
+</html>
