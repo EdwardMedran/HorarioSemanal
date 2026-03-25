@@ -532,6 +532,66 @@ for (let h = 5; h <= 23; h++) {
 }
 
 var currentDay = "lunes", saveDebounce = null, dragSrc = null, slotCounter = 0;
+
+// ── Touch drag implementation ──────────────────────────────────────────────
+var touchClone = null, touchOffsetY = 0;
+
+function touchDragInit(e, row) {
+  const touch = e.touches[0];
+  const rect = row.getBoundingClientRect();
+  touchOffsetY = touch.clientY - rect.top;
+
+  // Create a visual clone that follows the finger
+  touchClone = row.cloneNode(true);
+  touchClone.style.cssText = `
+    position:fixed;left:${rect.left}px;top:${rect.top}px;
+    width:${rect.width}px;opacity:.85;z-index:999;
+    pointer-events:none;border-radius:8px;
+    box-shadow:0 8px 32px rgba(0,0,0,.5);
+    background:var(--surface2);
+    transition:none;
+  `;
+  document.body.appendChild(touchClone);
+
+  document.addEventListener("touchmove", touchDragMove, { passive: false });
+  document.addEventListener("touchend", touchDragEnd, { passive: false });
+}
+
+function touchDragMove(e) {
+  e.preventDefault();
+  const touch = e.touches[0];
+  const y = touch.clientY - touchOffsetY;
+  if (touchClone) touchClone.style.top = y + "px";
+
+  // Find which row we're hovering over
+  document.querySelectorAll(".time-row").forEach(r => r.classList.remove("drag-over"));
+  const el = document.elementFromPoint(touch.clientX, touch.clientY);
+  const target = el ? el.closest(".time-row") : null;
+  if (target && target !== dragSrc) target.classList.add("drag-over");
+}
+
+function touchDragEnd(e) {
+  document.removeEventListener("touchmove", touchDragMove);
+  document.removeEventListener("touchend", touchDragEnd);
+  if (touchClone) { touchClone.remove(); touchClone = null; }
+
+  const touch = e.changedTouches[0];
+  const el = document.elementFromPoint(touch.clientX, touch.clientY);
+  const target = el ? el.closest(".time-row") : null;
+
+  document.querySelectorAll(".time-row").forEach(r => r.classList.remove("drag-over"));
+  if (dragSrc) dragSrc.classList.remove("dragging");
+
+  if (target && target !== dragSrc && dragSrc) {
+    const list = document.getElementById("scheduleList");
+    const rows = [...list.querySelectorAll(".time-row")];
+    const srcIdx = rows.indexOf(dragSrc);
+    const dstIdx = rows.indexOf(target);
+    list.insertBefore(dragSrc, srcIdx < dstIdx ? target.nextSibling : target);
+    scheduleSave();
+  }
+  dragSrc = null;
+}
 function newSlotId() { return "s" + (++slotCounter) + "_" + Date.now(); }
 
 function setSyncStatus(s) {
@@ -601,6 +661,7 @@ function makeRow(slotId, timeVal, actVal, animDelay) {
   const handle = document.createElement("div");
   handle.className = "drag-handle"; handle.innerHTML = "&#8942;&#8942;"; handle.title = "Arrastra para reordenar";
 
+  // ── Desktop drag & drop ──
   row.draggable = true;
   row.addEventListener("dragstart", e => { dragSrc = row; row.classList.add("dragging"); e.dataTransfer.effectAllowed = "move"; });
   row.addEventListener("dragend", () => { row.classList.remove("dragging"); document.querySelectorAll(".time-row").forEach(r => r.classList.remove("drag-over")); scheduleSave(); });
@@ -614,6 +675,14 @@ function makeRow(slotId, timeVal, actVal, animDelay) {
       list.insertBefore(dragSrc, rows.indexOf(dragSrc) < rows.indexOf(row) ? row.nextSibling : row);
     }
   });
+
+  // ── Mobile touch drag ──
+  handle.addEventListener("touchstart", e => {
+    e.preventDefault();
+    dragSrc = row;
+    row.classList.add("dragging");
+    touchDragInit(e, row);
+  }, { passive: false });
 
   const lbl = document.createElement("div"); lbl.className = "time-label";
   const timeInp = document.createElement("input");
