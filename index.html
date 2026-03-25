@@ -231,8 +231,10 @@ h1 span{background:linear-gradient(135deg,var(--accent),var(--accent2));
 @media (max-width: 600px) {
 
   /* Auth */
-  .page{padding:.75rem;align-items:flex-end;}
-  .auth-card{border-radius:20px 20px 16px 16px;padding:2rem 1.25rem 1.75rem;
+  .page{padding:.75rem;}
+  #loginPage,#changePwPage{align-items:center;}
+  #appPage:not(.hidden){align-items:flex-start;}
+  .auth-card{border-radius:20px;padding:2rem 1.25rem 1.75rem;
     max-height:92vh;overflow-y:auto;}
   .auth-logo{margin-bottom:1.4rem;}
   .auth-logo h1{font-size:1.6rem;}
@@ -488,6 +490,7 @@ function doLogin() {
       document.getElementById("userEmail").textContent = email;
       setLoading("loginBtn", false);
       showPage("appPage");
+      startInactivityWatcher();
       initApp();
     },
     onFailure(err) {
@@ -540,6 +543,7 @@ function doChangePassword() {
       document.getElementById("userEmail").textContent = email;
       setLoading("changePwBtn", false);
       showPage("appPage");
+      startInactivityWatcher();
       initApp();
     },
     onFailure(err) {
@@ -551,10 +555,60 @@ function doChangePassword() {
 
 // ── Logout ─────────────────────────────────────
 function doLogout() {
+  stopInactivityWatcher();
   if (cognitoUser) cognitoUser.signOut();
   idToken = null; cognitoUser = null;
   showPage("loginPage");
 }
+
+// ── Inactividad — cierra sesión tras 10 min sin actividad ──
+const INACTIVITY_MS = 10 * 60 * 1000;
+var inactivityTimer = null;
+
+function resetInactivityTimer() {
+  clearTimeout(inactivityTimer);
+  inactivityTimer = setTimeout(() => {
+    if (cognitoUser) {
+      doLogout();
+      showToast("Sesión cerrada por inactividad", true);
+    }
+  }, INACTIVITY_MS);
+}
+
+function startInactivityWatcher() {
+  ["mousemove","mousedown","keydown","touchstart","scroll","click"].forEach(evt =>
+    document.addEventListener(evt, resetInactivityTimer, { passive: true })
+  );
+  resetInactivityTimer();
+}
+
+function stopInactivityWatcher() {
+  clearTimeout(inactivityTimer);
+  ["mousemove","mousedown","keydown","touchstart","scroll","click"].forEach(evt =>
+    document.removeEventListener(evt, resetInactivityTimer)
+  );
+}
+
+// ── Detectar cuando el usuario vuelve a la pestaña ──
+document.addEventListener("visibilitychange", () => {
+  if (document.visibilityState === "visible" && cognitoUser) {
+    cognitoUser.getSession((err, session) => {
+      if (err || !session || !session.isValid()) {
+        stopInactivityWatcher();
+        cognitoUser.signOut();
+        cognitoUser = null;
+        idToken = null;
+        showPage("loginPage");
+        // Toast especial de sesión expirada
+        const t = document.getElementById("toast");
+        t.textContent = "⏱ Sesión caducada — vuelve a iniciar sesión";
+        t.className = "toast error-toast";
+        t.classList.add("show");
+        setTimeout(() => t.classList.remove("show"), 4000);
+      }
+    });
+  }
+});
 
 // Enter key + restaurar sesión cuando el DOM esté listo
 document.addEventListener("DOMContentLoaded", () => {
@@ -570,6 +624,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const email = session.getIdToken().payload.email || current.getUsername();
     document.getElementById("userEmail").textContent = email;
     showPage("appPage");
+    startInactivityWatcher();
     initApp();
   });
 });
