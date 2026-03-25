@@ -450,6 +450,7 @@ function doLogout() {
   stopInactivityWatcher();
   if (cognitoUser) cognitoUser.signOut();
   idToken = null; cognitoUser = null;
+  document.getElementById("loginPassword").value = "";
   showPage("loginPage");
 }
 
@@ -478,6 +479,7 @@ document.addEventListener("visibilitychange", () => {
       if (err || !session || !session.isValid()) {
         stopInactivityWatcher();
         cognitoUser.signOut(); cognitoUser = null; idToken = null;
+        document.getElementById("loginPassword").value = "";
         showPage("loginPage");
         const t = document.getElementById("toast");
         t.textContent = "⏱ Sesión caducada — vuelve a iniciar sesión";
