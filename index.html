@@ -527,7 +527,7 @@ const DAYS  = ["lunes","martes","miercoles","jueves","viernes","sabado","domingo
 const DAY_NAMES = { lunes:"Lunes", martes:"Martes", miercoles:"Miércoles", jueves:"Jueves", viernes:"Viernes", sabado:"Sábado", domingo:"Domingo" };
 for (let h = 5; h <= 23; h++) {
   const p = h < 12 ? "AM" : "PM";
-  const d = h <= 12 ? h : h - 12;
+  const d = h === 0 ? 12 : h <= 12 ? h : h - 12;
   SLOTS.push({ id: `h${h}`, label: `${d}:00 ${p}` });
 }
 
@@ -716,26 +716,33 @@ function buildRows(slots, dir) {
   let entries = [];
 
   if (slots && Object.keys(slots).length > 0) {
-    // Remove control key before processing
     const orderStr = slots["__order"];
     const cleanSlots = Object.fromEntries(Object.entries(slots).filter(([k]) => k !== "__order"));
 
+    // Build entries with correct fallback time from slot id
+    function slotFallback(id) {
+      const found = SLOTS.find(s => s.id === id);
+      return found ? found.label : "";
+    }
+
     if (orderStr) {
-      // Respect saved order
       const orderedKeys = orderStr.split(",").filter(k => cleanSlots[k] !== undefined);
-      // Add any keys not in order at the end (safety)
       const remaining = Object.keys(cleanSlots).filter(k => !orderedKeys.includes(k));
       const allKeys = [...orderedKeys, ...remaining];
-      entries = allKeys.map((id, index) => {
-        const fallback = SLOTS[index] ? SLOTS[index].label : "";
-        const parsed = parseSlotValue(cleanSlots[id], fallback);
+      entries = allKeys.map(id => {
+        const parsed = parseSlotValue(cleanSlots[id], slotFallback(id));
         return { slotId: id, time: parsed.time, activity: parsed.activity };
       });
     } else {
-      // No order saved — sort by time label naturally
-      entries = Object.entries(cleanSlots).map(([id, v], index) => {
-        const fallback = SLOTS[index] ? SLOTS[index].label : "";
-        const parsed = parseSlotValue(v, fallback);
+      // Sort by SLOTS original order using slot id
+      const slotOrder = SLOTS.map(s => s.id);
+      const sortedEntries = Object.entries(cleanSlots).sort(([a], [b]) => {
+        const ai = slotOrder.indexOf(a), bi = slotOrder.indexOf(b);
+        // Unknown ids go to end
+        return (ai === -1 ? 999 : ai) - (bi === -1 ? 999 : bi);
+      });
+      entries = sortedEntries.map(([id, v]) => {
+        const parsed = parseSlotValue(v, slotFallback(id));
         return { slotId: id, time: parsed.time, activity: parsed.activity };
       });
     }
